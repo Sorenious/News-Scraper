@@ -21,13 +21,20 @@
         float: right;
         width: 30%;
       }
-      #notes {
-        float: right;
-        width: 30%;
+      #notes h2 {
+        margin-bottom: 20px;
+        margin-top: 5px;
+      }
+      #notes-list {        
+        overflow: auto;
+        height: 280px;
       }
       .note {
         border: 1px solid #333;
         margin: 2px 0px;
+      }
+      .delete {
+        float: right;
       }
       h4 {
         margin: 5px;
@@ -52,8 +59,8 @@
   </head>
   <body>
     <div id="wrapper">
-      <h1>Note Scraper</h1>
-      <h2><i>If you can do this...the homework should be no problem.</i></h2>
+      <h1>News Scraper & Note Taker</h1>
+      
       <div id="articles"></div>
       <div id="notes">
         <div id="add-notes"></div>

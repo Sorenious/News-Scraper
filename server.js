@@ -37,7 +37,7 @@ mongoose.connect(MONGODB_URI, {
 // Routes
 
 // A GET route for scraping the echojs website
-//app.get("/scrape", function(req, res) {
+app.get("/", function(req, res) {
   // First, we grab the body of the html with request
   axios.get("http://www.nytimes.com").then(function(response) {
     // Then, we load that into cheerio and save it to $ for a shorthand selector
@@ -77,7 +77,7 @@ mongoose.connect(MONGODB_URI, {
     // If we were able to successfully scrape and save an Article, send a message to the client
     //res.send("Scrape Complete");
   });
-//});
+});
 
 // Route for getting all Articles from the db
 app.get("/articles", function(req, res) {
@@ -128,6 +128,30 @@ app.post("/articles/:id", function(req, res) {
       // { new: true } tells the query that we want it to return the updated User -- it returns the original by default
       // Since our mongoose query returns a promise, we can chain another `.then` which receives the result of the query
       return db.Article.findOneAndUpdate({_id: req.params.id}, { $push: { note: dbNote._id } }, { new: true });
+    })
+    .then(function(dbArticle) {
+      // If the User was updated successfully, send it back to the client
+      res.json(dbArticle);
+    })
+    .catch(function(err) {
+      // If an error occurs, send it back to the client
+      res.json(err);
+    });
+});
+
+app.delete("/articles/:aId/:nId", function(req, res) {
+  // TODO
+  // ====
+  // save the new note that gets posted to the Notes collection
+  // then find an article from the req.params.id
+  // and update it's "note" property with the _id of the new note
+  db.Note
+    .remove({"_id": req.params.nId})
+    .then(function(dbNote) {
+      // If a Note was created successfully, find one User (there's only one) and push the new Note's _id to the User's `notes` array
+      // { new: true } tells the query that we want it to return the updated User -- it returns the original by default
+      // Since our mongoose query returns a promise, we can chain another `.then` which receives the result of the query
+      return db.Article.findOneAndUpdate({_id: req.params.aId}, { $pull: { note: dbNote._id } }, { new: true });
     })
     .then(function(dbArticle) {
       // If the User was updated successfully, send it back to the client
